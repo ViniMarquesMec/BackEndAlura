@@ -4,11 +4,18 @@ import express from "express";
 // Importa o middleware Multer para lidar com uploads de arquivos
 import multer from "multer";
 
+import cors from "cors";
+const corsOptions = {
+  origin: "http://localhost:8000",
+  optionsSuccessStatus: 200,
+};
+
 // Importa funções do controlador de posts (provavelmente para lógica de posts)
 import {
   listarPosts, // Função para listar todos os posts
   postarNewPost, // Função para criar um novo post
-  uploadImagem, // Função para lidar com o upload de imagens
+  uploadImagem,
+  atualizarNewPoste, // Função para lidar com o upload de imagens
 } from "../controlers/postsControllers.js";
 
 // Configura o armazenamento em disco do Multer
@@ -30,7 +37,7 @@ const upload = multer({ dest: "./uploads", storage });
 const routes = (app) => {
   // Permite que o servidor entenda dados JSON nas requisições
   app.use(express.json());
-
+  app.use(cors(corsOptions));
   // Rota GET para "/posts" para buscar todos os posts (chama a função listarPosts)
   app.get("/posts", listarPosts);
 
@@ -39,6 +46,7 @@ const routes = (app) => {
 
   // Rota POST para "/upload" com middleware Multer e função uploadImagem
   app.post("/upload", upload.single("imagem"), uploadImagem);
+  app.put("/upload/:id", atualizarNewPoste);
 };
 
 // Exporta a função de rotas como o padrão
